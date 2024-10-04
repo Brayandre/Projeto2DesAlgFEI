@@ -21,7 +21,7 @@ struct usuarios {
 };
 
 typedef struct{
-    char nome;
+    char nome[30];
     int quantidade;
     float preco;
 }Produtos;
@@ -29,14 +29,67 @@ typedef struct{
 
 int main(){
 
-    Produtos bebidas[4]{
+    Produtos bebidas[6] = {
         {"Agua", 10, 1.5},
         {"Coca-Cola", 5, 3.5},
         {"Fanta Uva", 7, 4.5},
         {"Suco Natural", 3, 8.5},
         {"Leite", 15, 5.5},
-        {"Cerveja Heinekein", 6, 10},
-    }
+        {"Cerveja Heinekein", 6, 10}
+    };
+
+    Produtos frutveg[12] = {
+        {"Uva", 12, 9.0},
+        {"Laranja", 20, 3.0},
+        {"Banana", 20, 3.0},
+        {"Limao", 14, 3.5},
+        {"Morango", 25, 4.0},
+        {"Maca", 15, 5.0},
+        {"Alface", 17, 7.0},
+        {"Tomate", 30, 3.5 },
+        {"Beterraba", 10, 5.5},
+        {"Repolho", 8, 8.5},
+        {"Cenoura", 18, 6.0},
+        {"Brocolis", 6, 9.0}
+    };
+
+
+    Produtos acougue[10] = {
+        {"Filé Mignon", 20, 98},
+        {"Picanha", 14, 65},
+        {"Bife Ancho", 42, 79},
+        {"Wagyu", 23, 134},
+        {"Asinha Temperada", 48, 19},
+        {"Linguica", 70, 28},
+        {"Peito de Frango", 54, 22},
+        {"Costela Bovina", 40, 18},
+        {"Panceta", 25, 33},
+        {"Acém", 10, 1.5}
+    };
+
+    Produtos alim_n_perec[5] = {
+        {"Arroz", 30, 17},
+        {"Feijao", 30, 7},
+        {"Macarrao", 20, 4.5},
+        {"Sal", 27, 5.0},
+        {"Acucar", 18, 4.5}
+            };
+
+    Produtos limp[5] = {
+        {"Desinfetante", 20, 12},
+        {"Sabao em po", 30, 15},
+        {"Detergente", 15, 9},
+        {"Cloro", 10, 25},
+        {"Bombril", 30, 1.8}
+    };
+
+    Produtos padaria[4] = {
+        {"Pao Frances", 70, 2},
+        {"Sonho", 30, 4},
+        {"Baguete", 40, 5},
+        {"Ovo", 10, 15}
+    };
+
 
     struct usuarios Clientes [NUM_USUARIO] = {
     {"47169633817", "pepa10"},
@@ -50,6 +103,8 @@ int main(){
     {"43138734812", "rafa0702"},
     {"47143409834", "wrna123"}
     };
+
+
 
     
 
