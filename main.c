@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <time.h>
+#include "funcoes_cli.h"
 
 #define NUM_USUARIO 10
 #define NUM_ADM 2
@@ -108,25 +109,55 @@ int main(){
 
     
 
-        struct adm Administrador[NUM_ADM] = {
+    struct adm Administrador[NUM_ADM] = {
     {"lucas", "luciano10"},
     {"romero", "garro10"}
     };
 
-    printf("Bem-vindo ao MARKETFEI, nós somos um super mercado recheados de novas ofertas e produtos, acesse o conteúdo a partir de seu login\n");
-    printf("Você deseja acessar a nossa loja virtual?(S/N)");
-    scanf("%c", &entrar);
+    char login_A[12];
+    char senha_A[20];
 
+    printf("Bem-vindo ao MARKETFEI, nós somos um super mercado recheados de novas ofertas e produtos, acesse o conteúdo a partir de seu login\n");
+    printf("Digite seu login (CPF): ");
+    scanf("%11s", login_A);
+    printf("Digite sua senha: ");
+    scanf("%11s", senha_A);
+    int encontrado = 0;
+    for (int i = 0; i < NUM_USUARIO; i++) {
+        if (strcmp(Clientes[i].cpf, login_A) == 0 && strcmp(Clientes[i].senha, senha_A) == 0) {
+            encontrado = 1;
+            break;
+        }
+    }
+
+    printf("*************************************************\n");
+    printf("Você deseja acessar a nossa loja virtual?(S/N)");
+    scanf(" %c", &entrar);
     if(toupper(entrar) == 'S'){
         printf("Você entrou!\n");
         printf("\n");
-        printf("Aqui estão os nossos produtos:\n");
-        printf("1 - Bebidas\n");
-        printf("2 - Frutas/Vegetais\n");
-        printf("3 - Açougue\n");
-        printf("4 - Alimentos Nao pereciveis\n");
-        printf("5 - Limpeza\n");
-        printf("6 - Padaria\n");
+        printf("1 - Nossos Produtos\n");
+        printf("2 - Carrinho\n");
+        printf("3 - Forma de Pagamento\n");
+        printf("4 - Sing out\n");
+
+        while(true) {
+            int op;
+            printf("Digite a opção que deseja: ");
+            scanf(" %d", &op);
+            if (op == 1){
+                f_produtos();
+            }
+            else if (op == 2){
+                // f_carrinho();
+            }
+            else if (op == 3){
+                // f_forma();
+            }
+            else{
+                return 1;
+            }
+        }
     }
     else if(toupper(entrar) == 'A'){
         printf("Bem vindo ADEMIR\n");
