@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "funcoes_cli.h"
+#include "dec_global.h"
 
 #define NUM_USUARIO 10
 #define NUM_ADM 2
@@ -21,16 +22,10 @@ struct usuarios {
     char senha[20];
 };
 
-typedef struct{
-    char nome[30];
-    int quantidade;
-    float preco;
-}Produtos;
-
 
 int main(){
 
-    Produtos bebidas[6] = {
+    struct Produtos bebidas[6] = {
         {"Agua", 10, 1.5},
         {"Coca-Cola", 5, 3.5},
         {"Fanta Uva", 7, 4.5},
@@ -39,7 +34,7 @@ int main(){
         {"Cerveja Heinekein", 6, 10}
     };
 
-    Produtos frutveg[12] = {
+    struct Produtos frutveg[12] = {
         {"Uva", 12, 9.0},
         {"Laranja", 20, 3.0},
         {"Banana", 20, 3.0},
@@ -55,7 +50,7 @@ int main(){
     };
 
 
-    Produtos acougue[10] = {
+    struct Produtos acougue[10] = {
         {"Filé Mignon", 20, 98},
         {"Picanha", 14, 65},
         {"Bife Ancho", 42, 79},
@@ -68,7 +63,7 @@ int main(){
         {"Acém", 10, 1.5}
     };
 
-    Produtos alim_n_perec[5] = {
+    struct Produtos alim_n_perec[5] = {
         {"Arroz", 30, 17},
         {"Feijao", 30, 7},
         {"Macarrao", 20, 4.5},
@@ -76,7 +71,7 @@ int main(){
         {"Acucar", 18, 4.5}
             };
 
-    Produtos limp[5] = {
+    struct Produtos limp[5] = {
         {"Desinfetante", 20, 12},
         {"Sabao em po", 30, 15},
         {"Detergente", 15, 9},
@@ -84,7 +79,7 @@ int main(){
         {"Bombril", 30, 1.8}
     };
 
-    Produtos padaria[4] = {
+    struct Produtos padaria[4] = {
         {"Pao Frances", 70, 2},
         {"Sonho", 30, 4},
         {"Baguete", 40, 5},
@@ -104,11 +99,7 @@ int main(){
     {"43138734812", "rafa0702"},
     {"47143409834", "wrna123"}
     };
-
-
-
     
-
     struct adm Administrador[NUM_ADM] = {
     {"lucas", "luciano10"},
     {"romero", "garro10"}
@@ -121,7 +112,7 @@ int main(){
     printf("Digite seu login (CPF): ");
     scanf("%11s", login_A);
     printf("Digite sua senha: ");
-    scanf("%11s", senha_A);
+    scanf(" %11s", senha_A);
     int encontrado = 0;
     for (int i = 0; i < NUM_USUARIO; i++) {
         if (strcmp(Clientes[i].cpf, login_A) == 0 && strcmp(Clientes[i].senha, senha_A) == 0) {
@@ -129,41 +120,45 @@ int main(){
             break;
         }
     }
+    if (encontrado){
+        printf("*************************************************\n");
+        printf("Você deseja acessar a nossa loja virtual?(S/N)");
+        scanf(" %c", &entrar);
+        if(toupper(entrar) == 'S'){
+            printf("Você entrou!\n");
+            printf("\n");
 
-    printf("*************************************************\n");
-    printf("Você deseja acessar a nossa loja virtual?(S/N)");
-    scanf(" %c", &entrar);
-    if(toupper(entrar) == 'S'){
-        printf("Você entrou!\n");
-        printf("\n");
-        printf("1 - Nossos Produtos\n");
-        printf("2 - Carrinho\n");
-        printf("3 - Forma de Pagamento\n");
-        printf("4 - Sing out\n");
-
-        while(true) {
-            int op;
-            printf("Digite a opção que deseja: ");
-            scanf(" %d", &op);
-            if (op == 1){
-                f_produtos();
-            }
-            else if (op == 2){
-                // f_carrinho();
-            }
-            else if (op == 3){
-                // f_forma();
-            }
-            else{
-                return 1;
+            while(true){
+                int op;
+                printf("1 - Nossos Produtos\n");
+                printf("2 - Carrinho\n");
+                printf("3 - Forma de Pagamento\n");
+                printf("4 - Sing out\n");
+                printf("Digite a opção que deseja: ");
+                scanf(" %d", &op);
+                if (op == 1){
+                    f_produtos(frutveg, 12);
+                }
+                else if (op == 2){
+                    // f_carrinho();
+                }
+                else if (op == 3){
+                    // f_forma();
+                }
+                else{
+                    return 1;
+                }
             }
         }
-    }
-    else if(toupper(entrar) == 'A'){
-        printf("Bem vindo ADEMIR\n");
+        else if(toupper(entrar) == 'A'){
+            printf("Bem vindo ADEMIR\n");
+        }
+        else{
+            return 1;
+        }
     }
     else{
-        return 1;
+        printf("Usuario inexistente\n");
     }
 
 }
