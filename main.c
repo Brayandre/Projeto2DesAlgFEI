@@ -22,6 +22,7 @@ struct usuarios {
     char senha[20];
 };
 
+void passarConta(const char* senha, const char* cpf);
 
 int main(){
 
@@ -63,6 +64,9 @@ int main(){
         printf("Você deseja acessar a nossa loja virtual?(S/N)");
         scanf(" %c", &entrar);
         if(toupper(entrar) == 'S'){
+            const char* cpfE = login_A;
+            const char* senhaE = senha_A;
+            passarConta(senhaE, cpfE);
             printf("Você entrou!\n");
             printf("\n");
 

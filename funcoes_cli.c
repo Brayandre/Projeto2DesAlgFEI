@@ -6,6 +6,9 @@
 #include <time.h>
 #include "dec_global.h"
 
+char senha[12];
+char cpf[12];
+
     struct Produtos bebidas[6] = {
         {"Agua", 10, 1.5},
         {"Coca-Cola", 5, 3.5},
@@ -67,20 +70,25 @@
     };
 
     struct carrinho{
-        char nome_p;
-        int quantidade_p;
+        char nome_p[50];
+        int qtd_p;
         float preco_p;
-        float valT; 
-    }
+        float val_p; 
+    };
 
-void save_carrinho(const char cpf, char nome_p, float preco_p, int qtdP, float valorP){
+void passarConta(const char* senhaE, const char* cpfE){
+    strcpy(senha, senhaE);
+    strcpy(cpf, cpfE);
+}
+
+void save_carrinho(const char* cpf, char* nome_p, float preco_p, int qtdP, float valorP){
     struct carrinho c;
 
     //determinação de envio
-    strncpy(c.nome_p, nome_p, sizeof(c, nome_p) -1);
+    strcpy(c.nome_p, nome_p);
     c.preco_p = preco_p;
-    c.qtdP = qtdP;
-    c.valorP = valorP;
+    c.qtd_p = qtdP;
+    c.val_p = valorP;
 
     char nome_arq[50];
 
@@ -91,7 +99,7 @@ void save_carrinho(const char cpf, char nome_p, float preco_p, int qtdP, float v
         printf("Erro ao abrir o arquivo\n");
     } 
 
-    fwrite(&e, sizeof(struct carrinho), 1, file);
+    fwrite(&c, sizeof(struct carrinho), 1, file);
 
     fclose(file);
 }
@@ -114,6 +122,8 @@ void f_produtos(struct Produtos produto[], int tamanho){
     char buy;
     int setor;
     float valorP;
+    char nome_p;
+    float preco_p;
 
     printf("Digite o numero do setor de compras que deseja acessar: ");
     scanf(" %d", &setor);
@@ -134,7 +144,8 @@ void f_produtos(struct Produtos produto[], int tamanho){
                     valorP = qtdP * bebidas[i].preco;
                     printf("Valor adicionado ao carrinho: %.2f\n", valorP);
                     bebidas[i].quantidade -= qtdP;
-                    nome_p = bebidas[i].nome;
+                    char *nome_p = malloc(strlen(bebidas[i].nome) + 1); // Aloca memória para a string
+                    strcpy(nome_p, bebidas[i].nome); // Correto, se nome_p é um ponteiro
                     preco_p = bebidas[i].preco;
                     save_carrinho(cpf,nome_p,preco_p, qtdP, valorP);
                 }
@@ -198,7 +209,7 @@ void f_produtos(struct Produtos produto[], int tamanho){
         }
     }
     else if(setor == 4){
-        printf("Bem-vindo ao setor de Alimentos Não perecíveis, onde o produto é bom e barato!");
+        printf("Bem-vindo ao setor de Alimentos Não perecíveis, onde o produto é bom e barato!\n");
         printf("---------------------------------------------------------------------------------------------------------\n");
         int tamanho = sizeof(alim_n_perec) / sizeof(alim_n_perec[0]);
         for (int i = 0; i < tamanho; i++){
@@ -223,7 +234,7 @@ void f_produtos(struct Produtos produto[], int tamanho){
         }
     }
     else if(setor == 5){
-        printf("Bem-vindo ao setor de LIMPEZA, aqui você encontra de tudo para deixar sua casa no brinco!");
+        printf("Bem-vindo ao setor de LIMPEZA, aqui você encontra de tudo para deixar sua casa no brinco!\n");
         printf("---------------------------------------------------------------------------------------------------------\n");
         int tamanho = sizeof(limp) / sizeof(limp[0]);
         for (int i = 0; i < tamanho; i++){
@@ -248,20 +259,20 @@ void f_produtos(struct Produtos produto[], int tamanho){
         }
     }
     else if(setor == 6){
-        printf("Bem-vindo ao setor PADARIA, onde o pão sai quentinho!");
+        printf("Bem-vindo ao setor PADARIA, onde o pão sai quentinho!\n");
         printf("---------------------------------------------------------------------------------------------------------\n");
-        int tamanho = sizeof(alim_n_perec) / sizeof(alim_n_perec[0]);
+        int tamanho = sizeof(padaria) / sizeof(padaria[0]);
         for (int i = 0; i < tamanho; i++){
-            printf("Nome: %s\n", alim_n_perec[i].nome);
-            printf("Quantidade: %d\n", alim_n_perec[i].quantidade);
-            printf("Preço: R$ %.2f\n", alim_n_perec[i].preco);
-            printf("voçê deseja comprar %s ? (S/N) ", alim_n_perec[i].nome);
+            printf("Nome: %s\n", padaria[i].nome);
+            printf("Quantidade: %d\n", padaria[i].quantidade);
+            printf("Preço: R$ %.2f\n", padaria[i].preco);
+            printf("voçê deseja comprar %s ? (S/N) ", padaria[i].nome);
             scanf("%s", &buy);
             if (toupper(buy) == 'S'){
                 printf("Digite a quantidade que deseja comprar: ");
                 scanf("%d", &qtdP);
-                if (qtdP <= alim_n_perec[i].quantidade){
-                    valorP = qtdP * alim_n_perec[i].preco;
+                if (qtdP <= padaria[i].quantidade){
+                    valorP = qtdP * padaria[i].preco;
                     printf("Valor adicionado ao carrinho: %.2f\n", valorP);
                 }
                 else{
