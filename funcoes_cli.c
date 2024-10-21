@@ -104,6 +104,50 @@ void save_carrinho(const char* cpf, char* nome_p, float preco_p, int qtdP, float
     fclose(file);
 }
 
+void lerCarrinho(const char* cpf){
+    struct carrinho c;
+    char nome_arq[50];
+    int totCar, lerCar, i;
+
+    snprintf(nome_arq, sizeof(nome_arq), "%s_carrinho.bin", cpf);
+
+    FILE *file = fopen(nome_arq, "rb");
+    if (file == NULL){
+        printf("Ainda não há carrinho em sua conta!\n");
+        return;
+    } 
+
+    //calcula a qtd de produtos do carrinho no arquivo - end - size - cal 
+    fseek(file, 0, SEEK_END);
+    long tam_arq = ftell(file);
+    totCar = tam_arq / sizeof(struct carrinho);
+
+    //vai determinar quantos extratos serão lidos a partir do calculo anterior, com um limite de 100
+    lerCar = totCar > 100 ? 100: totCar;
+
+    //move o ponteiro de inicio de leitura para o inicio do arquivo
+    fseek(file, -(lerCar * sizeof(struct carrinho)), SEEK_END);
+
+    for (i = 0; i < lerCar;i++){
+        printf("*******************************************\n");
+        fread(&c, sizeof(struct carrinho),1,file);
+        printf("Produto: %s\n", c.nome_p);
+        printf("Preço: %.3f\n", c.preco_p);
+        printf("Quantidade: %.0d\n", c.qtd_p);
+        printf("Valor total (quantidade x valor) %.3f\n", c.val_p);
+        
+        
+    }
+
+    fclose(file);
+
+
+}
+
+void verCar(){
+    printf("Aqui estão seus carrinhos: \n");
+    lerCarrinho(cpf);
+}
 
 void f_produtos(struct Produtos produto[], int tamanho){
     printf("\n");

@@ -82,7 +82,7 @@ int main(){
                     f_produtos();
                 }
                 else if (op == 2){
-                    // f_carrinho();
+                    // verCar();
                 }
                 else if (op == 3){
                     // f_forma();
