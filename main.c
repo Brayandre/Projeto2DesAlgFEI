@@ -82,10 +82,10 @@ int main(){
                     f_produtos();
                 }
                 else if (op == 2){
-                    // verCar();
+                    verCar();
                 }
                 else if (op == 3){
-                    // f_forma();
+                    formaPag();
                 }
                 else{
                     return 1;
