@@ -74,7 +74,7 @@ int main(){
                 int op;
                 printf("1 - Nossos Produtos\n");
                 printf("2 - Carrinho\n");
-                printf("3 - Forma de Pagamento\n");
+                printf("3 - Pagamento\n");
                 printf("4 - Sing out\n");
                 printf("Digite a opção que deseja: ");
                 scanf(" %d", &op);

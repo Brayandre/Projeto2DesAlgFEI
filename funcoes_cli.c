@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <time.h>
 #include "dec_global.h"
+#include <unistd.h>
 
 char senha[12];
 char cpf[12];
@@ -152,9 +153,58 @@ void verCar(){
 
 void formaPag(){
     printf("-------------------------------------------------\n");
+    printf("Digite seu login: ");
+    char log_f[12];
+    scanf("%12s", log_f);
+    printf("Digite sua senha: ");
+    char sen_f[20];
+    scanf("%20s", sen_f);
+
+    if (strcmp(log_f, cpf) != 0 || strcmp(sen_f, senha) != 0){
+        return;
+    };
     printf("Aqui estão as formas de pagamento disponiveis para voce utilizar: \n");
-    printf("Crédito FEI\n");
-    printf(" ");
+    printf("1 - Crédito FEI\n");
+    printf("2 - Depósito\n");
+    printf("3 - Chave Pix\n");
+    int escolha;
+    printf("Selecione sua escolha: ");
+    scanf("%d", &escolha);
+    printf("--------------------------------------------------------------\n");
+ 
+    switch (escolha){
+        case 1: 
+            printf("Crédito FEI: A cada hora complementar cumprida, você recebe R$ 1.50 \n ");
+            printf("Digite quantas hora complementares você quer trocar:  ");
+            int credF;
+            scanf("%d", &credF);    
+        case 2:
+            printf("Digite o valor que deseja depositar:  ");
+            int deposito;
+            scanf("%d", &deposito);
+        case 3:
+            printf("Gerando Chave...  \n");
+            // temporizador
+            int t = 8; //
+
+            while (t > 0) {
+                sleep(1);
+                
+                for (int i = 0; i < t; i++) {
+                    printf("."); 
+                }
+                printf("\n"); 
+                t--; 
+            }
+            srand(time(NULL));
+            long long int chave_pix = 1000000000LL + rand() % 9000000000LL;
+            printf("Chave pix: %lld\n", chave_pix);
+            
+
+        default:
+        printf("Opção não encotrada!!\n");
+        break;
+    }
 }
 
 void f_produtos(struct Produtos produto[], int tamanho){
@@ -169,6 +219,8 @@ void f_produtos(struct Produtos produto[], int tamanho){
         "Sair",
     };
 
+    int setor;
+
     do{
         printf("-------------------------------------------------");
         printf("\n");
@@ -181,7 +233,6 @@ void f_produtos(struct Produtos produto[], int tamanho){
 
         int qtdP;
         char buy;
-        int setor;
         float valorP;
         char nome_p;
         float preco_p;
@@ -226,6 +277,7 @@ void f_produtos(struct Produtos produto[], int tamanho){
                 printf("---------------------------------------------------------------------------------------------------------\n");
                 int tamanho2 = sizeof(frutveg) / sizeof(frutveg[0]);
                 for (int i = 0; i < tamanho2; i++){
+                    printf("**************************************************\n");
                     printf("Nome: %s\n", frutveg[i].nome);
                     printf("Quantidade: %d\n", frutveg[i].quantidade);
                     printf("Preço: R$ %.2f\n", frutveg[i].preco);
@@ -255,8 +307,8 @@ void f_produtos(struct Produtos produto[], int tamanho){
             case 3:
                 printf("Bem-vindo ao setor de Alimentos Não Perecíveis, aqui você encontra as peças mais bela que cabem no SEU BOLSO!\n");
                 printf("-----------------------------------------------------------------------------------------\n");
-                int tamanho2 = sizeof(acougue) / sizeof(acougue[0]);
-                for (int i = 0; i < tamanho2; i++){
+                int tamanho3 = sizeof(acougue) / sizeof(acougue[0]);
+                for (int i = 0; i < tamanho3; i++){
                     printf("Nome: %s\n", acougue[i].nome);
                     printf("Quantidade: %d\n", acougue[i].quantidade);
                     printf("Preço: R$ %.2f\n", acougue[i].preco);
@@ -283,11 +335,11 @@ void f_produtos(struct Produtos produto[], int tamanho){
                 }
                 break;
                 
-            case 3
+            case 4:
                 printf("Bem-vindo ao setor de Alimentos Não perecíveis, onde o produto é bom e barato!\n");
                 printf("---------------------------------------------------------------------------------------------------------\n");
-                int tamanho3 = sizeof(alim_n_perec) / sizeof(alim_n_perec[0]);
-                for (int i = 0; i < tamanho3; i++){
+                int tamanho4 = sizeof(alim_n_perec) / sizeof(alim_n_perec[0]);
+                for (int i = 0; i < tamanho4; i++){
                     printf("Nome: %s\n", alim_n_perec[i].nome);
                     printf("Quantidade: %d\n", alim_n_perec[i].quantidade);
                     printf("Preço: R$ %.2f\n", alim_n_perec[i].preco);
@@ -314,11 +366,11 @@ void f_produtos(struct Produtos produto[], int tamanho){
                 printf("**************************************\n");
                 break;
 
-            case 4:
+            case 5:
                 printf("Bem-vindo ao setor de LIMPEZA, aqui você encontra de tudo para deixar sua casa no brinco!\n");
                 printf("---------------------------------------------------------------------------------------------------------\n");
-                int tamanho4 = sizeof(limp) / sizeof(limp[0]);
-                for (int i = 0; i < tamanho4; i++){
+                int tamanho5 = sizeof(limp) / sizeof(limp[0]);
+                for (int i = 0; i < tamanho5; i++){
                     printf("Nome: %s\n", limp[i].nome);
                     printf("Quantidade: %d\n", limp[i].quantidade);
                     printf("Preço: R$ %.2f\n", limp[i].preco);
@@ -384,6 +436,6 @@ void f_produtos(struct Produtos produto[], int tamanho){
                 break;
         }  
 
-    } while (setor !=7);
+    } while (setor != 7);
         
 }

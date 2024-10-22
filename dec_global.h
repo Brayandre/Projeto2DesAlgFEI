@@ -13,6 +13,11 @@ struct Carrinho{
     float valTot;
 };
 
+struct tipoPag{
+    float creditoFEI;
+    float dinheiro;
+};
+
 // void pegarData(int *dia, int *mes){
     
 //     time_t d = time(NULL);
