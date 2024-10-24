@@ -13,10 +13,13 @@ struct Carrinho{
     float valTot;
 };
 
-struct tipoPag{
+typedef struct{
     float creditoFEI;
     float dinheiro;
-};
+    char numCartao;
+    float cartaoF;
+}tipoPag;
+
 
 // void pegarData(int *dia, int *mes){
     

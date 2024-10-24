@@ -10,6 +10,8 @@
 char senha[12];
 char cpf[12];
 
+tipoPag carteira = {0, 0 , 2000};
+
     struct Produtos bebidas[6] = {
         {"Agua", 10, 1.5},
         {"Coca-Cola", 5, 3.5},
@@ -165,7 +167,7 @@ void formaPag(){
     };
     printf("Aqui estão as formas de pagamento disponiveis para voce utilizar: \n");
     printf("1 - Crédito FEI\n");
-    printf("2 - Depósito\n");
+    printf("2 - Cartão de Crédito\n");
     printf("3 - Chave Pix\n");
     int escolha;
     printf("Selecione sua escolha: ");
@@ -174,14 +176,40 @@ void formaPag(){
  
     switch (escolha){
         case 1: 
-            printf("Crédito FEI: A cada hora complementar cumprida, você recebe R$ 1.50 \n ");
+            printf("Crédito FEI: A cada hora complementar cumprida, você recebe R$ 2.50 \n ");
             printf("Digite quantas hora complementares você quer trocar:  ");
             int credF;
-            scanf("%d", &credF);    
+            scanf("%d", &credF); 
+            carteira.creditoFEI = credF * 2.5;   
         case 2:
-            printf("Digite o valor que deseja depositar:  ");
-            int deposito;
-            scanf("%d", &deposito);
+            char entry;
+            printf("Você possui nosso cartão de crédito FEI?(S/N)");
+            scanf(" %c", &entry);
+            if(toupper(entry) == 'S'){
+                char numCart;
+                printf("Digite o numero do seu cartão: ");
+                scanf("%s", numCart);
+                if (numCart == carteira.numCartao){
+                    printf("Digite o valor que deseja utlizar do cartão, lembrando que seu limite é %f \n", carteira.creditoFEI);
+                    int credito;
+                    scanf("%f", credito);
+                    if (credito >= carteira.creditoFEI){
+                        printf("Limite indisponivel\n");
+                    }
+                    carteira.creditoFEI -= credito;
+                }
+                else{
+                    printf("Cartão não encontrado\n");
+                }
+            }
+            else{
+                printf("Você deseja fazer um cartão de crédito FEI?\n");
+                scanf("%c", &entry);
+                if(toupper(entry) == 'S'){
+
+                }
+                printf("Voltando ao menu...");
+            }
         case 3:
             printf("Gerando Chave...  \n");
             // temporizador
