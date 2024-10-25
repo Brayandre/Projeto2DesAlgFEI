@@ -10,7 +10,7 @@
 char senha[12];
 char cpf[12];
 
-tipoPag carteira = {0, 0 , 2000};
+tipoPag carteira = {0, 0 , 0, 2000};
 
     struct Produtos bebidas[6] = {
         {"Agua", 10, 1.5},
@@ -138,12 +138,9 @@ void lerCarrinho(const char* cpf){
         printf("Preço: %.3f\n", c.preco_p);
         printf("Quantidade: %.0d\n", c.qtd_p);
         printf("Valor total (quantidade x valor) %.3f\n", c.val_p);
-        printf("-------------------------------------------------\n");
-        
     }
 
     fclose(file);
-
 
 }
 
@@ -173,7 +170,8 @@ void formaPag(){
     printf("Selecione sua escolha: ");
     scanf("%d", &escolha);
     printf("--------------------------------------------------------------\n");
- 
+    char entry;
+
     switch (escolha){
         case 1: 
             printf("Crédito FEI: A cada hora complementar cumprida, você recebe R$ 2.50 \n ");
@@ -181,35 +179,92 @@ void formaPag(){
             int credF;
             scanf("%d", &credF); 
             carteira.creditoFEI = credF * 2.5;   
+            break;
         case 2:
-            char entry;
-            printf("Você possui nosso cartão de crédito FEI?(S/N)");
+            printf("Você possui nosso cartão de crédito FEI?(S/N) : ");
             scanf(" %c", &entry);
             if(toupper(entry) == 'S'){
-                char numCart;
-                printf("Digite o numero do seu cartão: ");
-                scanf("%s", numCart);
+                int numCart;
+                printf("Digite o número do seu cartão: ");
+                scanf(" %d", &numCart);
                 if (numCart == carteira.numCartao){
-                    printf("Digite o valor que deseja utlizar do cartão, lembrando que seu limite é %f \n", carteira.creditoFEI);
-                    int credito;
-                    scanf("%f", credito);
-                    if (credito >= carteira.creditoFEI){
-                        printf("Limite indisponivel\n");
+                    printf("Lembrando que o seu limite é %2.f \n", carteira.cartaoD);
+                    float credito;
+                    char nome_arq[50];
+                    snprintf(nome_arq, sizeof(nome_arq), "%s_carrinho.bin", cpf);
+                    struct carrinho c;
+                    int totCar, lerCar, i;
+                    FILE *file = fopen(nome_arq, "rb");
+                    if (file == NULL){
+                        printf("Ainda não há carrinho em sua conta!\n");
+                        return;
+                    } 
+
+                    //calcula a qtd de produtos do carrinho no arquivo - end - size - cal 
+                    fseek(file, 0, SEEK_END);
+                    long tam_arq = ftell(file);
+                    totCar = tam_arq / sizeof(struct carrinho);
+
+                    //vai determinar quantos extratos serão lidos a partir do calculo anterior, com um limite de 100
+                    lerCar = totCar > 100 ? 100: totCar;
+
+                    //move o ponteiro de inicio de leitura para o inicio do arquivo
+                    fseek(file, -(lerCar * sizeof(struct carrinho)), SEEK_END);
+                    
+                    for (i = 0; i < lerCar;i++){
+                        fread(&c, sizeof(struct carrinho),1,file);
+                        credito += c.val_p;   
                     }
-                    carteira.creditoFEI -= credito;
+                    printf("Valor total: %.2f\n", credito);
+                    if (credito >= carteira.cartaoD){
+                        printf("Limite indisponivel\n");
+                        printf("--------------------------------------------------------------------------------------------\n");
+                    }
+                    else{
+                        carteira.cartaoD -= credito;
+                        printf(" ");
+                        printf("Agora o seu limite é de %.2f", carteira.cartaoD);
+                        if (remove(nome_arq) == 0) {
+                            printf("Arquivo '%s' removido com sucesso.\n", nome_arq);
+                        } else {
+                            perror("Erro ao remover o arquivo");
+                        }
+                        printf("Carrinho pago\n");
+                    }
                 }
                 else{
                     printf("Cartão não encontrado\n");
                 }
-            }
-            else{
-                printf("Você deseja fazer um cartão de crédito FEI?\n");
-                scanf("%c", &entry);
-                if(toupper(entry) == 'S'){
+                break;
 
-                }
-                printf("Voltando ao menu...");
             }
+            if(toupper(entry) == 'N'){
+                printf("Você deseja fazer um cartão de crédito FEI?(S/N): ");
+                scanf(" %c", &entry);
+                if(toupper(entry) == 'S'){
+                    printf("Criando cartão...\n");
+
+                    int t = 8;
+                    while (t > 0) {
+                        sleep(1);   
+                        for (int i = 0; i < t; i++) {
+                            printf("."); 
+                        }
+                        printf("\n"); 
+                        t--; 
+                    }
+                    srand(time(NULL));
+                    long long int cart = 1000000000LL + rand() % 9000000000LL;
+                    carteira.numCartao = cart;
+                    printf("Número do Cartão de Crédito: %d\n", carteira.numCartao);
+                    printf("--------------------------------------------------------------------------------------------\n");
+                
+                }
+            }
+            printf("Voltando ao menu...\n");
+            printf("--------------------------------------------------------------------------------------------\n");
+            break;
+
         case 3:
             printf("Gerando Chave...  \n");
             // temporizador
@@ -227,10 +282,17 @@ void formaPag(){
             srand(time(NULL));
             long long int chave_pix = 1000000000LL + rand() % 9000000000LL;
             printf("Chave pix: %lld\n", chave_pix);
-            
+            // if (remove(nome_arq) == 0) {
+            //     printf("Arquivo '%s' removido com sucesso.\n", nome_arq);
+            // } else {
+            //         perror("Erro ao remover o arquivo");
+            // }
+            printf("Carrinho pago");
+            printf("--------------------------------------------------------------------------------------------\n");
+            break;
 
         default:
-        printf("Opção não encotrada!!\n");
+        printf("Opção não encontrada!!\n");
         break;
     }
 }

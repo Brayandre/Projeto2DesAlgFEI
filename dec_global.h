@@ -16,8 +16,8 @@ struct Carrinho{
 typedef struct{
     float creditoFEI;
     float dinheiro;
-    char numCartao;
-    float cartaoF;
+    int numCartao;
+    float cartaoD;
 }tipoPag;
 
 
