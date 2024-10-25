@@ -170,29 +170,45 @@ void formaPag(){
     int escolha;
     printf("Selecione sua escolha: ");
     scanf("%d", &escolha);
-    printf("--------------------------------------------------------------\n");
+    
     char entry;
-
+    int credF;
+    float credT;
+    float valS;
+    char nome_arq[50];
     switch (escolha){
         case 1: 
-            printf("Crédito FEI: A cada hora complementar cumprida, você recebe R$ 2.50 \n ");
-            printf("Digite quantas hora complementares você quer trocar: ");
-            int credF;
-            scanf("%d", &credF); 
-            carteira.creditoFEI = credF * 2.5;
-            printf("R$ %.2f é o valor recebido por suas horas complementarem, ainda deseja trocar? ", carteira.creditoFEI);   
+            printf("Crédito FEI: A cada hora complementar cumprida, você recebe R$ 2.50\n");
+            printf("Você quer visualizar quantos Reais em horas complementarem você tem em sua conta?");
             scanf(" %c", &entry);
-            if(toupper(entry) == 'N'){
-                printf("Voltando ao menu: \n");
-                return;
+            if (toupper(entry) == 'S'){
+                printf("-------------------------------------------------\n");
+                printf("Você possui R$ %.2f em horas complementares\n", carteira.creditoFEI);
+            
             }
             if(toupper(entry) != 'S' && toupper(entry) != 'N'){
-                printf("Opção não encontrada\n");
-                return;
+                printf("opção não econtrada");
+            }
+            printf("Você deseja fazer um deposito de horas complementares?");
+            scanf(" %c", &entry);
+            printf("-------------------------------------------------\n");
+            if(toupper(entry) == 'S'){
+                printf("Digite quantas hora complementares você quer trocar: ");
+                scanf(" %d", &credF); 
+                credT = credF * 2.5;
+                printf("R$ %.2f é o valor recebido por suas horas complementarem, ainda deseja trocar? ", credT);   
+                scanf(" %c", &entry);
+                printf("-------------------------------------------------\n");
+                if(toupper(entry) == 'N'){
+                    printf("Voltando ao menu: \n");
+                    return;
+                }
+                if(toupper(entry) != 'S' && toupper(entry) != 'N'){
+                    printf("Opção não encontrada\n");
+                    return;
+                }
             }
             //somando os valores
-            float valS;
-            char nome_arq[50];
             snprintf(nome_arq, sizeof(nome_arq), "%s_carrinho.bin", cpf);
             struct carrinho c;
             int totCar, lerCar, i;
@@ -210,15 +226,20 @@ void formaPag(){
                 fread(&c, sizeof(struct carrinho),1,file);
                 valS += c.val_p;   
             }
-            if(valS > credF){
-                printf("Horas complementarem insuficientes %d x 2.5 = %.2f \n", credF, carteira.creditoFEI);
+            if(valS > credT){
+                printf("Horas complementarem insuficientes %d x 2.5 = %.2f \n", credF, credT);
                 return;
             }
-
-            carteira.creditoFEI -= valS;
-
+            printf("--------------------------------------------------------------\n");
+            printf("Total a pagar: %.2f\n", valS);
+            carteira.creditoFEI = credT - valS;
             printf("Sobrou esse valor de creditos FEI R$ %.2f\n", carteira.creditoFEI);
-            printf("--------------------------------------------------------------------------------------------\n");
+            printf("--------------------------------------------------------------\n");
+            if (remove(nome_arq) == 0) {
+                printf(" ");
+            } else {
+                    perror("Erro ao remover o arquivo");
+            }
 
             break;
         case 2:
@@ -254,12 +275,13 @@ void formaPag(){
                     //verificando se a soma do carrinho é maior do que o limite do cartão
                     if (credito >= carteira.cartaoD){
                         printf("Limite indisponivel\n");
-                        printf("--------------------------------------------------------------------------------------------\n");
+                        printf("--------------------------------------------------------------\n");
                     }
                     else{
                         carteira.cartaoD -= credito;
                         printf(" ");
                         printf("Agora o seu limite é de %.2f", carteira.cartaoD);
+                        //apagando o carrinho
                         if (remove(nome_arq) == 0) {
                             printf("Arquivo '%s' removido com sucesso.\n", nome_arq);
                         } else {
@@ -293,12 +315,12 @@ void formaPag(){
                     long long int cart = 1000000000LL + rand() % 9000000000LL;
                     carteira.numCartao = cart;
                     printf("Número do Cartão de Crédito: %d\n", carteira.numCartao);
-                    printf("--------------------------------------------------------------------------------------------\n");
+                    printf("--------------------------------------------------------------\n");
                 
                 }
             }
             printf("Voltando ao menu...\n");
-            printf("--------------------------------------------------------------------------------------------\n");
+            printf("--------------------------------------------------------------\n");
             break;
 
         case 3:
@@ -334,8 +356,8 @@ void formaPag(){
             } else {
                     perror("Erro ao remover o arquivo");
             }
-            printf("Carrinho pago");
-            printf("--------------------------------------------------------------------------------------------\n");
+            printf("Carrinho pago\n");
+            printf("--------------------------------------------------------------\n");
             break;
 
         case 4:
