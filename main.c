@@ -72,6 +72,7 @@ int main(){
 
             while(true){
                 int op;
+                printf("--------------------------------------------------------------------------------------------\n");
                 printf("1 - Nossos Produtos\n");
                 printf("2 - Carrinho\n");
                 printf("3 - Pagamento\n");

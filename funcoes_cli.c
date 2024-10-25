@@ -137,7 +137,7 @@ void lerCarrinho(const char* cpf){
         printf("Produto: %s\n", c.nome_p);
         printf("Preço: %.3f\n", c.preco_p);
         printf("Quantidade: %.0d\n", c.qtd_p);
-        printf("Valor total (quantidade x valor) %.3f\n", c.val_p);
+        printf("Valor total (quantidade x valor) %.2f\n", c.val_p);
     }
 
     fclose(file);
@@ -166,6 +166,7 @@ void formaPag(){
     printf("1 - Crédito FEI\n");
     printf("2 - Cartão de Crédito\n");
     printf("3 - Chave Pix\n");
+    printf("4 - Sair\n");
     int escolha;
     printf("Selecione sua escolha: ");
     scanf("%d", &escolha);
@@ -175,10 +176,50 @@ void formaPag(){
     switch (escolha){
         case 1: 
             printf("Crédito FEI: A cada hora complementar cumprida, você recebe R$ 2.50 \n ");
-            printf("Digite quantas hora complementares você quer trocar:  ");
+            printf("Digite quantas hora complementares você quer trocar: ");
             int credF;
             scanf("%d", &credF); 
-            carteira.creditoFEI = credF * 2.5;   
+            carteira.creditoFEI = credF * 2.5;
+            printf("R$ %.2f é o valor recebido por suas horas complementarem, ainda deseja trocar? ", carteira.creditoFEI);   
+            scanf(" %c", &entry);
+            if(toupper(entry) == 'N'){
+                printf("Voltando ao menu: \n");
+                return;
+            }
+            if(toupper(entry) != 'S' && toupper(entry) != 'N'){
+                printf("Opção não encontrada\n");
+                return;
+            }
+            //somando os valores
+            float valS;
+            char nome_arq[50];
+            snprintf(nome_arq, sizeof(nome_arq), "%s_carrinho.bin", cpf);
+            struct carrinho c;
+            int totCar, lerCar, i;
+            FILE *file = fopen(nome_arq, "rb");
+            if (file == NULL){
+                printf("Ainda não há carrinho em sua conta!\n");
+                return;
+            } 
+            fseek(file, 0, SEEK_END);
+            long tam_arq = ftell(file);
+            totCar = tam_arq / sizeof(struct carrinho);
+            lerCar = totCar > 100 ? 100: totCar;
+            fseek(file, -(lerCar * sizeof(struct carrinho)), SEEK_END);
+            for (i = 0; i < lerCar;i++){
+                fread(&c, sizeof(struct carrinho),1,file);
+                valS += c.val_p;   
+            }
+            if(valS > credF){
+                printf("Horas complementarem insuficientes %d x 2.5 = %.2f \n", credF, carteira.creditoFEI);
+                return;
+            }
+
+            carteira.creditoFEI -= valS;
+
+            printf("Sobrou esse valor de creditos FEI R$ %.2f\n", carteira.creditoFEI);
+            printf("--------------------------------------------------------------------------------------------\n");
+
             break;
         case 2:
             printf("Você possui nosso cartão de crédito FEI?(S/N) : ");
@@ -190,6 +231,7 @@ void formaPag(){
                 if (numCart == carteira.numCartao){
                     printf("Lembrando que o seu limite é %2.f \n", carteira.cartaoD);
                     float credito;
+                    //somando as compras
                     char nome_arq[50];
                     snprintf(nome_arq, sizeof(nome_arq), "%s_carrinho.bin", cpf);
                     struct carrinho c;
@@ -199,23 +241,17 @@ void formaPag(){
                         printf("Ainda não há carrinho em sua conta!\n");
                         return;
                     } 
-
-                    //calcula a qtd de produtos do carrinho no arquivo - end - size - cal 
                     fseek(file, 0, SEEK_END);
                     long tam_arq = ftell(file);
                     totCar = tam_arq / sizeof(struct carrinho);
-
-                    //vai determinar quantos extratos serão lidos a partir do calculo anterior, com um limite de 100
                     lerCar = totCar > 100 ? 100: totCar;
-
-                    //move o ponteiro de inicio de leitura para o inicio do arquivo
                     fseek(file, -(lerCar * sizeof(struct carrinho)), SEEK_END);
-                    
                     for (i = 0; i < lerCar;i++){
                         fread(&c, sizeof(struct carrinho),1,file);
                         credito += c.val_p;   
                     }
                     printf("Valor total: %.2f\n", credito);
+                    //verificando se a soma do carrinho é maior do que o limite do cartão
                     if (credito >= carteira.cartaoD){
                         printf("Limite indisponivel\n");
                         printf("--------------------------------------------------------------------------------------------\n");
@@ -266,10 +302,20 @@ void formaPag(){
             break;
 
         case 3:
-            printf("Gerando Chave...  \n");
-            // temporizador
-            int t = 8; //
+            ; // manter o rotulo vazio
+            // char nome_arq[50];
+            snprintf(nome_arq, sizeof(nome_arq), "%s_carrinho.bin", cpf);
 
+            // FILE *file = fopen(nome_arq, "rb");
+            if (file == NULL){
+                printf("Ainda não há carrinho em sua conta!\n");
+                return;
+            } 
+
+
+            printf("Gerando Chave...  \n");
+            //temporizador
+            int t = 8; 
             while (t > 0) {
                 sleep(1);
                 
@@ -282,13 +328,18 @@ void formaPag(){
             srand(time(NULL));
             long long int chave_pix = 1000000000LL + rand() % 9000000000LL;
             printf("Chave pix: %lld\n", chave_pix);
-            // if (remove(nome_arq) == 0) {
-            //     printf("Arquivo '%s' removido com sucesso.\n", nome_arq);
-            // } else {
-            //         perror("Erro ao remover o arquivo");
-            // }
+
+            if (remove(nome_arq) == 0) {
+                printf("Arquivo '%s' removido com sucesso.\n", nome_arq);
+            } else {
+                    perror("Erro ao remover o arquivo");
+            }
             printf("Carrinho pago");
             printf("--------------------------------------------------------------------------------------------\n");
+            break;
+
+        case 4:
+            printf("Saindo..");
             break;
 
         default:
