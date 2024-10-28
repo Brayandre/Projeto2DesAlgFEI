@@ -10,7 +10,7 @@
 char senha[12];
 char cpf[12];
 
-tipoPag carteira = {0, 0 , 0, 2000};
+tipoPag carteira;
 
     struct Produtos bebidas[6] = {
         {"Agua", 10, 1.5},
@@ -106,11 +106,63 @@ void save_carrinho(const char* cpf, char* nome_p, float preco_p, int qtdP, float
 
     fclose(file);
 }
+void criaCart(){
+    char nome_arq_c[50];
+    snprintf(nome_arq_c, sizeof(nome_arq_c), "%s_carteira.txt", cpf);
+
+    FILE *file = fopen(nome_arq_c,"w");
+    if (file == NULL){
+        printf("Erro ao abrir o arquivo\n");
+        return;
+    } 
+
+    fprintf(file, "Credito FEI: %.2f\n", carteira.creditoFEI = 0);
+    fprintf(file, "Número do Cartão: %d\n", carteira.numCartao = 0) ;
+    fprintf(file, "Dinheiro Disp. Cartao: %.2f\n", carteira.cartaoD = 2000);
+
+    fclose(file);
+}
+
+
+void load_cart(const char* cpf, tipoPag *carteira) {
+    char nome_arq_c[50];
+    snprintf(nome_arq_c, sizeof(nome_arq_c), "%s_carteira.txt", cpf);
+
+    FILE *file = fopen(nome_arq_c, "r");
+    if (file == NULL) {
+        criaCart();
+        return;
+    }
+
+    fscanf(file, "Credito FEI: %f\n", &carteira->creditoFEI);
+    fscanf(file, "Número do Cartão: %d\n", &carteira->numCartao);
+    fscanf(file, "Dinheiro Disp. Cartao: %f\n", &carteira->cartaoD);
+
+    fclose(file);
+}
+
+void save_cart(const char* cpf){
+    char nome_arq_c[50];
+    snprintf(nome_arq_c, sizeof(nome_arq_c), "%s_carteira.txt", cpf);
+
+    FILE *file = fopen(nome_arq_c,"w");
+    if (file == NULL){
+        printf("Erro ao abrir o arquivo\n");
+        return;
+    } 
+
+    fprintf(file, "Credito FEI: %.2f\n", carteira.creditoFEI);
+    fprintf(file, "Número do Cartão: %d\n", carteira.numCartao);
+    fprintf(file, "Dinheiro Disp. Cartao: %.2f\n", carteira.cartaoD);
+
+    fclose(file);
+}
 
 void lerCarrinho(const char* cpf){
     struct carrinho c;
     char nome_arq[50];
     int totCar, lerCar, i;
+    float totalCar;
 
     snprintf(nome_arq, sizeof(nome_arq), "%s_carrinho.bin", cpf);
 
@@ -135,10 +187,12 @@ void lerCarrinho(const char* cpf){
         printf("-------------------------------------------------\n");
         fread(&c, sizeof(struct carrinho),1,file);
         printf("Produto: %s\n", c.nome_p);
-        printf("Preço: %.3f\n", c.preco_p);
+        printf("Preço: %.2f\n", c.preco_p);
         printf("Quantidade: %.0d\n", c.qtd_p);
         printf("Valor total (quantidade x valor) %.2f\n", c.val_p);
+        totalCar += c.val_p;
     }
+    printf("Total a pagar: %.2f\n", totalCar);
 
     fclose(file);
 
@@ -179,7 +233,7 @@ void formaPag(){
     switch (escolha){
         case 1: 
             printf("Crédito FEI: A cada hora complementar cumprida, você recebe R$ 2.50\n");
-            printf("Você quer visualizar quantos Reais em horas complementarem você tem em sua conta?");
+            printf("Você quer visualizar quantos Reais em horas complementarem você tem em sua conta(S/N)? ");
             scanf(" %c", &entry);
             if (toupper(entry) == 'S'){
                 printf("-------------------------------------------------\n");
@@ -189,14 +243,15 @@ void formaPag(){
             if(toupper(entry) != 'S' && toupper(entry) != 'N'){
                 printf("opção não econtrada");
             }
-            printf("Você deseja fazer um deposito de horas complementares?");
+            printf("Você deseja fazer um deposito de horas complementares(S/N)? ");
             scanf(" %c", &entry);
             printf("-------------------------------------------------\n");
             if(toupper(entry) == 'S'){
-                printf("Digite quantas hora complementares você quer trocar: ");
-                scanf(" %d", &credF); 
+                printf("Digite quantas horas complementares você quer trocar: ");
+                scanf(" %d", &credF);
+                credT = 0; 
                 credT = credF * 2.5;
-                printf("R$ %.2f é o valor recebido por suas horas complementarem, ainda deseja trocar? ", credT);   
+                printf("R$ %.2f é o valor recebido por suas horas complementarem, ainda deseja trocar(S/N)? ", credT);   
                 scanf(" %c", &entry);
                 printf("-------------------------------------------------\n");
                 if(toupper(entry) == 'N'){
@@ -207,6 +262,21 @@ void formaPag(){
                     printf("Opção não encontrada\n");
                     return;
                 }
+            }
+            else{
+                printf("Retornando ao menu.\n");
+                return;
+            }
+            carteira.creditoFEI += credT;
+            printf("Deseja pagar seu carrinho atual? ");
+            scanf(" %c", &entry);
+            if (toupper(entry) == 'N'){
+                printf("Retornando ao menu...\n");
+                return;
+            }
+            if(toupper(entry) != 'S' && toupper(entry) != 'N'){
+                printf("Opção não encontrada\n");
+                return;
             }
             //somando os valores
             snprintf(nome_arq, sizeof(nome_arq), "%s_carrinho.bin", cpf);
@@ -230,11 +300,11 @@ void formaPag(){
                 printf("Horas complementarem insuficientes %d x 2.5 = %.2f \n", credF, credT);
                 return;
             }
-            printf("--------------------------------------------------------------\n");
-            printf("Total a pagar: %.2f\n", valS);
+            printf("-------------------------------------------------\n");
+            printf("Total a pago pelo carinho: %.2f\n", valS);
             carteira.creditoFEI = credT - valS;
             printf("Sobrou esse valor de creditos FEI R$ %.2f\n", carteira.creditoFEI);
-            printf("--------------------------------------------------------------\n");
+            printf("-------------------------------------------------\n");
             if (remove(nome_arq) == 0) {
                 printf(" ");
             } else {
@@ -271,19 +341,19 @@ void formaPag(){
                         fread(&c, sizeof(struct carrinho),1,file);
                         credito += c.val_p;   
                     }
-                    printf("Valor total: %.2f\n", credito);
+                    printf("Valor total a ser pago: %.2f\n", credito);
                     //verificando se a soma do carrinho é maior do que o limite do cartão
                     if (credito >= carteira.cartaoD){
                         printf("Limite indisponivel\n");
-                        printf("--------------------------------------------------------------\n");
+                        printf("-------------------------------------------------\n");
                     }
                     else{
                         carteira.cartaoD -= credito;
-                        printf(" ");
-                        printf("Agora o seu limite é de %.2f", carteira.cartaoD);
+                        printf(" \n");
+                        printf("Agora o seu limite é de %.2f\n ", carteira.cartaoD);
                         //apagando o carrinho
                         if (remove(nome_arq) == 0) {
-                            printf("Arquivo '%s' removido com sucesso.\n", nome_arq);
+
                         } else {
                             perror("Erro ao remover o arquivo");
                         }
@@ -311,16 +381,15 @@ void formaPag(){
                         printf("\n"); 
                         t--; 
                     }
-                    srand(time(NULL));
-                    long long int cart = 1000000000LL + rand() % 9000000000LL;
-                    carteira.numCartao = cart;
+                    srand(time(NULL)); 
+                    carteira.numCartao = 1000000000LL + ((long long int)rand() * (9000000000LL / RAND_MAX));
                     printf("Número do Cartão de Crédito: %d\n", carteira.numCartao);
-                    printf("--------------------------------------------------------------\n");
+                    printf("-------------------------------------------------\n");
                 
                 }
             }
             printf("Voltando ao menu...\n");
-            printf("--------------------------------------------------------------\n");
+            printf("-------------------------------------------------\n");
             break;
 
         case 3:
@@ -352,16 +421,17 @@ void formaPag(){
             printf("Chave pix: %lld\n", chave_pix);
 
             if (remove(nome_arq) == 0) {
-                printf("Arquivo '%s' removido com sucesso.\n", nome_arq);
+                
             } else {
-                    perror("Erro ao remover o arquivo");
+                    perror("Não há carinnho em sua conta.");
+                    return;
             }
             printf("Carrinho pago\n");
-            printf("--------------------------------------------------------------\n");
+            printf("-------------------------------------------------\n");
             break;
 
         case 4:
-            printf("Saindo..");
+            printf("Saindo..\n");
             break;
 
         default:
@@ -409,6 +479,7 @@ void f_produtos(struct Produtos produto[], int tamanho){
                 printf("--------------------------------------------------------------------------------------------\n");
                 int tamanho1 = sizeof(bebidas) / sizeof(bebidas[0]);
                 for (int i = 0; i < tamanho1; i++){
+                    printf("**************************************************\n");
                     printf("Nome: %s\n", bebidas[i].nome);
                     printf("Quantidade: %d\n", bebidas[i].quantidade);
                     printf("Preço: R$ %.2f\n", bebidas[i].preco);
@@ -432,7 +503,7 @@ void f_produtos(struct Produtos produto[], int tamanho){
                     }
                 }
                 printf("...\n");
-                printf("**************************************\n");
+                printf("**************************************************\n");
                 break;
 
             case 2:
@@ -464,7 +535,7 @@ void f_produtos(struct Produtos produto[], int tamanho){
                     }
                 }
                 printf("...\n");
-                printf("**************************************\n");
+                printf("**************************************************\n");
                 break;
             
             case 3:
@@ -472,6 +543,7 @@ void f_produtos(struct Produtos produto[], int tamanho){
                 printf("-----------------------------------------------------------------------------------------\n");
                 int tamanho3 = sizeof(acougue) / sizeof(acougue[0]);
                 for (int i = 0; i < tamanho3; i++){
+                    printf("**************************************************\n");
                     printf("Nome: %s\n", acougue[i].nome);
                     printf("Quantidade: %d\n", acougue[i].quantidade);
                     printf("Preço: R$ %.2f\n", acougue[i].preco);
@@ -494,7 +566,7 @@ void f_produtos(struct Produtos produto[], int tamanho){
                         }
                     }
                     printf("...\n");
-                    printf("**************************************\n");
+                    printf("**************************************************\n");
                 }
                 break;
                 
@@ -503,6 +575,7 @@ void f_produtos(struct Produtos produto[], int tamanho){
                 printf("---------------------------------------------------------------------------------------------------------\n");
                 int tamanho4 = sizeof(alim_n_perec) / sizeof(alim_n_perec[0]);
                 for (int i = 0; i < tamanho4; i++){
+                    printf("**************************************************\n");
                     printf("Nome: %s\n", alim_n_perec[i].nome);
                     printf("Quantidade: %d\n", alim_n_perec[i].quantidade);
                     printf("Preço: R$ %.2f\n", alim_n_perec[i].preco);
@@ -526,7 +599,7 @@ void f_produtos(struct Produtos produto[], int tamanho){
                     }
                 }
                 printf("...\n");
-                printf("**************************************\n");
+                printf("**************************************************\n");
                 break;
 
             case 5:
@@ -534,6 +607,7 @@ void f_produtos(struct Produtos produto[], int tamanho){
                 printf("---------------------------------------------------------------------------------------------------------\n");
                 int tamanho5 = sizeof(limp) / sizeof(limp[0]);
                 for (int i = 0; i < tamanho5; i++){
+                    printf("**************************************************\n");
                     printf("Nome: %s\n", limp[i].nome);
                     printf("Quantidade: %d\n", limp[i].quantidade);
                     printf("Preço: R$ %.2f\n", limp[i].preco);
@@ -557,7 +631,7 @@ void f_produtos(struct Produtos produto[], int tamanho){
                     }
                 }
                 printf("...\n");
-                printf("**************************************\n");
+                printf("**************************************************\n");
                 break;
 
             case 6:
@@ -565,6 +639,7 @@ void f_produtos(struct Produtos produto[], int tamanho){
                 printf("---------------------------------------------------------------------------------------------------------\n");
                 int tamanho6 = sizeof(padaria) / sizeof(padaria[0]);
                 for (int i = 0; i < tamanho6; i++){
+                    printf("**************************************************\n");
                     printf("Nome: %s\n", padaria[i].nome);
                     printf("Quantidade: %d\n", padaria[i].quantidade);
                     printf("Preço: R$ %.2f\n", padaria[i].preco);
@@ -588,7 +663,7 @@ void f_produtos(struct Produtos produto[], int tamanho){
                     }
                 }
                 printf("...\n");
-                printf("**************************************\n");
+                printf("**************************************************\n");
                 break;
                 
             case 7:

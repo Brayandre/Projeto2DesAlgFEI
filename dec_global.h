@@ -7,18 +7,13 @@ struct Produtos{
     float preco;
 };
 
-struct Carrinho{
-    int id;
-    char data;
-    float valTot;
-};
-
 typedef struct{
     float creditoFEI;
-    float dinheiro;
     int numCartao;
     float cartaoD;
 }tipoPag;
+
+tipoPag carteira;
 
 
 // void pegarData(int *dia, int *mes){
