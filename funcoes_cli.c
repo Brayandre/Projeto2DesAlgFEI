@@ -172,15 +172,12 @@ void lerCarrinho(const char* cpf){
         return;
     } 
 
-    //calcula a qtd de produtos do carrinho no arquivo - end - size - cal 
+    //calcula a qtd de produtos do carrinho
     fseek(file, 0, SEEK_END);
     long tam_arq = ftell(file);
     totCar = tam_arq / sizeof(struct carrinho);
 
-    //vai determinar quantos extratos serão lidos a partir do calculo anterior, com um limite de 100
     lerCar = totCar > 100 ? 100: totCar;
-
-    //move o ponteiro de inicio de leitura para o inicio do arquivo
     fseek(file, -(lerCar * sizeof(struct carrinho)), SEEK_END);
 
     for (i = 0; i < lerCar;i++){
@@ -342,7 +339,6 @@ void formaPag(){
                         credito += c.val_p;   
                     }
                     printf("Valor total a ser pago: %.2f\n", credito);
-                    //verificando se a soma do carrinho é maior do que o limite do cartão
                     if (credito >= carteira.cartaoD){
                         printf("Limite indisponivel\n");
                         printf("-------------------------------------------------\n");
@@ -394,10 +390,8 @@ void formaPag(){
 
         case 3:
             ; // manter o rotulo vazio
-            // char nome_arq[50];
             snprintf(nome_arq, sizeof(nome_arq), "%s_carrinho.bin", cpf);
 
-            // FILE *file = fopen(nome_arq, "rb");
             if (file == NULL){
                 printf("Ainda não há carrinho em sua conta!\n");
                 return;

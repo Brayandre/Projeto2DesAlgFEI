@@ -15,17 +15,6 @@ typedef struct{
 
 tipoPag carteira;
 
-
-// void pegarData(int *dia, int *mes){
-    
-//     time_t d = time(NULL);
-
-//     struct tm *dataA = localtime(&d);
-
-//     *dia = dataA->tm_mday - 1;
-//     *mes = dataA->tm_mon + 1;    
-// };
-
 extern struct Produtos frutveg[12];
 
 #endif

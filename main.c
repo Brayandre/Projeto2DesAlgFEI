@@ -7,7 +7,6 @@
 #include "funcoes_cli.h"
 #include "dec_global.h"
 
-// Definições de constantes e estruturas
 #define NUM_USUARIO 10
 #define NUM_ADM 2
 #define NUM_PROD 50
@@ -25,11 +24,11 @@ struct usuarios {
 
 
 void passarConta(const char* senha, const char* cpf);
-void load_cart(const char* cpf, tipoPag *carteira); // Declare a função aqui
+void load_cart(const char* cpf, tipoPag *carteira);
 
 int main() {
     struct usuarios Clientes[NUM_USUARIO] = {
-        {"47169633817", "pepa10"},
+        {"12345678901", "professor"},
         {"47143403454", "senha143"},
         {"47143409804", "brayan12"},
         {"47143408904", "se22a123"},
@@ -93,7 +92,7 @@ int main() {
                 } else if (op == 3) {
                     formaPag();
                 } else if (op == 4) {
-                    printf("Até breve\n");
+                    printf("Até breve... S2\n");
                     return 1;
                 } else {
                     return 1;
